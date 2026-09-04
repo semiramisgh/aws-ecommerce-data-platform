@@ -1,0 +1,20 @@
+# Python
+.venv/
+venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Credentials and local settings
+.env
+.aws/
+*.pem
+*.key
+
+# macOS and VS Code
+.DS_Store
+.vscode/
+
+# Generated data
+data/raw/
+data/processed/
