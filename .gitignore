@@ -19,3 +19,4 @@ __pycache__/
 data/raw/
 data/processed/
 data/clean/
+data/curated/
