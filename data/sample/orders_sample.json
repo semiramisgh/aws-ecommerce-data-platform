@@ -1,0 +1,22 @@
+[
+    {
+    "order_id": "ORD-1001",
+    "customer_id": "CUST-001",
+    "product_id": "PROD-101",
+    "order_timestamp": "2026-09-04T08:15:00Z",
+    "quantity": 2,
+    "unit_price": 29.99,
+    "currency": "EUR",
+    "status": "completed"
+    },
+    {
+    "order_id": "ORD-1002",
+    "customer_id": "CUST-002",
+    "product_id": "PROD-102",
+    "order_timestamp": "2026-09-04T09:30:00Z",
+    "quantity": 1,
+    "unit_price": 49.5,
+    "currency": "EUR",
+    "status": "pending"
+    }
+]
