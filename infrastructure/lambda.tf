@@ -23,6 +23,12 @@ resource "aws_lambda_function" "raw_ingestion_monitor" {
   memory_size   = 128
   timeout       = 3
 
+  environment {
+    variables = {
+      GLUE_WORKFLOW_NAME = aws_glue_workflow.ecommerce_pipeline.name
+    }
+  }
+
   ephemeral_storage {
     size = 512
   }
@@ -42,5 +48,6 @@ resource "aws_lambda_function" "raw_ingestion_monitor" {
 
   depends_on = [
     aws_iam_role_policy_attachment.raw_ingestion_lambda,
+    aws_iam_role_policy_attachment.lambda_start_glue_workflow
   ]
 }

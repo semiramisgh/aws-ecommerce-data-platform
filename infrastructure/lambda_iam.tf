@@ -66,3 +66,28 @@ resource "aws_iam_role_policy_attachment" "raw_ingestion_lambda" {
   role       = aws_iam_role.raw_ingestion_lambda.name
   policy_arn = aws_iam_policy.lambda_basic_execution.arn
 }
+
+data "aws_iam_policy_document" "lambda_start_glue_workflow" {
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "glue:StartWorkflowRun",
+    ]
+
+    resources = [
+      aws_glue_workflow.ecommerce_pipeline.arn,
+    ]
+  }
+}
+
+resource "aws_iam_policy" "lambda_start_glue_workflow" {
+  name   = "aws-ecommerce-lambda-start-glue-workflow"
+  path   = "/service-role/"
+  policy = data.aws_iam_policy_document.lambda_start_glue_workflow.json
+}
+
+resource "aws_iam_role_policy_attachment" "lambda_start_glue_workflow" {
+  role       = aws_iam_role.raw_ingestion_lambda.name
+  policy_arn = aws_iam_policy.lambda_start_glue_workflow.arn
+}

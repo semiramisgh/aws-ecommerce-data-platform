@@ -1,7 +1,9 @@
 import json
 import logging
+import os
 from urllib.parse import unquote_plus
 
+import boto3
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
@@ -33,12 +35,27 @@ def lambda_handler(event, context):
             }
         )
 
+    workflow_run_id = None
+
+    if processed_objects:
+       workflow_name = os.environ["GLUE_WORKFLOW_NAME"]
+       glue_client = boto3.client("glue")
+       workflow_response = glue_client.start_workflow_run(Name=workflow_name)
+       workflow_run_id = workflow_response["RunId"]
+
+       logger.info(
+         "Glue workflow started: name=%s run_id=%s",
+         workflow_name,
+         workflow_run_id,
+       )
+
     return {
         "statusCode": 200,
         "body": json.dumps(
             {
                 "message": "S3 event processed successfully",
                 "processed_count": len(processed_objects),
+                "workflow_run_id": workflow_run_id,
                 "objects": processed_objects,
             }
         ),

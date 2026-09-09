@@ -13,14 +13,17 @@ A["REST API and CSV"] --> B["Python ingestion"]
 B --> C["Amazon S3 Raw - JSON"]
 C --> D["AWS Lambda"]
 D --> E["Amazon CloudWatch"]
-C --> F["AWS Glue - PySpark"]
-F --> G["Amazon S3 Clean - Parquet"]
-G --> H["AWS Glue Data Catalog"]
-H --> I["Amazon Athena"]
-G --> J["AWS Glue Curated Job"]
-J --> K["Amazon S3 Curated Sales"]
-K --> L["AWS Glue Data Catalog"]
-L --> M["Athena Analytics"]
+D --> F["AWS Glue Workflow"]
+F --> G["On-demand Trigger"]
+G --> H["Raw-to-Clean Glue Job"]
+H --> I["Amazon S3 Clean - Parquet"]
+I --> J["AWS Glue Data Catalog"]
+J --> K["Amazon Athena"]
+H --> L["Conditional Trigger on Success"]
+L --> M["Clean-to-Curated Glue Job"]
+M --> N["Amazon S3 Curated Sales"]
+N --> O["AWS Glue Data Catalog"]
+O --> P["Amazon Athena Analytics"]
 ```
 
 ## Data Layers
@@ -34,17 +37,20 @@ L --> M["Athena Analytics"]
 The curated sales dataset is partitioned by `ingestion_date` to reduce the amount of data scanned by analytical queries.
 
 ## Implemented Workflow
+The pipeline is automated with AWS Glue Workflow and event-driven Lambda orchestration:
 
 1. Ingest synthetic customer, order, and product data using Python.
 2. Upload the source data to the Amazon S3 raw layer.
 3. Process S3 events with AWS Lambda and record monitoring information in CloudWatch.
-4. Transform raw JSON data into clean Parquet datasets using AWS Glue and PySpark.
-5. Discover clean datasets with AWS Glue Crawlers.
-6. Validate clean tables using Amazon Athena.
-7. Join orders, customers, and products into a curated sales dataset.
-8. Write partitioned Parquet files to the S3 curated layer.
-9. Register the curated dataset in the AWS Glue Data Catalog.
-10. Run analytical SQL queries using Amazon Athena.
+4. Start the AWS Glue Workflow automatically from Lambda.
+5. Run the raw-to-clean Glue job through an on-demand workflow trigger.
+6. Start the clean-to-curated Glue job only after the raw-to-clean job succeeds.
+7. Transform raw JSON data into clean Parquet datasets using AWS Glue and PySpark.
+8. Discover clean datasets with AWS Glue Crawlers and validate them using Amazon Athena.
+9. Join orders, customers, and products into a curated sales dataset.
+10. Write partitioned Parquet files to the S3 curated layer.
+11. Register the curated dataset in the AWS Glue Data Catalog.
+12. Run analytical SQL queries using Amazon Athena.
 
 ## Analytics Results
 
@@ -104,6 +110,7 @@ Example business analyses include:
 │ ├── lambda_iam.tf
 │ ├── lambda_trigger.tf
 │ ├── monitoring.tf
+| |── orchestration.tf
 │ ├── providers.tf
 │ ├── s3.tf
 │ ├── variables.tf
@@ -182,7 +189,7 @@ The core end-to-end data pipeline is complete:
 - [x] Clean-to-curated Glue transformation
 - [x] Curated Glue Data Catalog
 - [x] Athena business analytics
-- [ ] Automated orchestration
+- [x] Automated orchestration
 - [x] Infrastructure as Code
 - [x] Secure remote Terraform state
 - [x] Terraform CI validation
