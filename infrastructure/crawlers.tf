@@ -2,7 +2,7 @@ resource "aws_glue_crawler" "clean" {
   name          = "ecommerce-clean-crawler"
   description   = "Catalog clean Parquet datasets from Amazon S3"
   database_name = aws_glue_catalog_database.clean.name
-  role          = "AWSGlueServiceRole-ecommerce-data-platform"
+  role          = aws_iam_role.glue_service.name
 
   configuration = jsonencode({
     Version              = 1.0
@@ -36,7 +36,7 @@ resource "aws_glue_crawler" "curated" {
   name          = "ecommerce-curated-crawler"
   description   = "Catalog curated sales Parquet dataset from Amazon S3"
   database_name = aws_glue_catalog_database.curated.name
-  role          = "AWSGlueServiceRole-ecommerce-data-platform"
+  role          = aws_iam_role.glue_service.name
 
   configuration = jsonencode({
     Version              = 1.0

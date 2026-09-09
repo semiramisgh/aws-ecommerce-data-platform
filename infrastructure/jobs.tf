@@ -1,9 +1,5 @@
 data "aws_caller_identity" "current" {}
 
-data "aws_iam_role" "glue_service" {
-  name = "AWSGlueServiceRole-ecommerce-data-platform"
-}
-
 locals {
   glue_common_default_arguments = {
     "--spark-event-logs-path" = "s3://aws-glue-assets-${data.aws_caller_identity.current.account_id}-${var.aws_region}/sparkHistoryLogs/"
@@ -18,7 +14,7 @@ locals {
 
 resource "aws_glue_job" "raw_to_clean" {
   name              = "aws-ecommerce-raw-to-clean"
-  role_arn          = data.aws_iam_role.glue_service.arn
+  role_arn          = aws_iam_role.glue_service.arn
   glue_version      = "6.0"
   worker_type       = "G.1X"
   number_of_workers = 2
@@ -51,7 +47,7 @@ resource "aws_glue_job" "raw_to_clean" {
 resource "aws_glue_job" "clean_to_curated" {
   name              = "aws-ecommerce-clean-to-curated"
   description       = "Transforms clean Parquet datasets into curated"
-  role_arn          = data.aws_iam_role.glue_service.arn
+  role_arn          = aws_iam_role.glue_service.arn
   glue_version      = "6.0"
   worker_type       = "G.1X"
   number_of_workers = 2
