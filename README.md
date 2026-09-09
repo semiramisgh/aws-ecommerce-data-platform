@@ -138,4 +138,4 @@ The core end-to-end data pipeline is complete:
 - [ ] Automated orchestration
 - [ ] Infrastructure as Code
 - [ ] BI dashboard
-- [ ] Automated tests
+- [x] Automated tests
