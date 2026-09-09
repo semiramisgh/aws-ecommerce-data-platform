@@ -25,12 +25,12 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
-  strategy:
-    fail-fast: false
-    matrix:
-      directory:
-        - bootstrap
-        - infrastructure
+    strategy:
+      fail-fast: false
+      matrix:
+        directory:
+          - bootstrap
+          - infrastructure
 
     defaults:
       run:
