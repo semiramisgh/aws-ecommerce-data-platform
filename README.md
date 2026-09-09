@@ -1,5 +1,8 @@
 # AWS E-Commerce Data Platform
 
+[![Python tests](https://github.com/semiramishg/aws-ecommerce-data-platform/actions/workflows/tests.yml/badge.svg)](https://github.com/semiramishg/aws-ecommerce-data-platform/actions/workflows/tests.yml)
+[![Terraform Checks](https://github.com/semiramishg/aws-ecommerce-data-platform/actions/workflows/terraform.yml/badge.svg)](https://github.com/semiramishg/aws-ecommerce-data-platform/actions/workflows/terraform.yml)
+
 An end-to-end AWS data engineering project that ingests synthetic e-commerce data, processes it through raw, clean, and curated data layers, and makes it available for serverless analytics.
 
 ## Architecture
@@ -74,28 +77,72 @@ Example business analyses include:
 - Amazon CloudWatch
 - AWS CLI
 - Git and GitHub
+- Terraform
+- GitHub Actions
 
 ## Project Structure
 
 ```text
 .
+├── .github/
+│ └── workflows/
+│ ├── terraform.yml
+│ └── tests.yml
 ├── architecture/
 │ └── decisions/
+├── bootstrap/
+│ └── main.tf
 ├── data/
-│ ├── raw/
-│ ├── clean/
-│ ├── curated/
 │ └── sample/
 ├── docs/
 ├── infrastructure/
+│ ├── crawlers.tf
+│ ├── glue.tf
+│ ├── iam.tf
+│ ├── jobs.tf
+│ ├── lambda.tf
+│ ├── lambda_iam.tf
+│ ├── lambda_trigger.tf
+│ ├── monitoring.tf
+│ ├── providers.tf
+│ ├── s3.tf
+│ ├── variables.tf
+│ └── versions.tf
 ├── sql/
 │ └── athena/
-└── src/
-├── glue/
-├── ingestion/
-├── lambda/
-└── utils/
+├── src/
+│ ├── glue/
+│ ├── ingestion/
+│ ├── lambda/
+│ ├── utils/
+│ └── run_pipeline.py
+├── tests/
+├── .env.example
+├── pytest.ini
+├── requirements.txt
+└── README.md
 ```
+
+## Infrastructure as Code
+
+Terraform manages the AWS resources used by the data platform, including:
+
+- Amazon S3 data-lake configuration
+- AWS Glue databases, crawlers, jobs, IAM roles, and policies
+- AWS Lambda function, IAM resources, and S3 event notification
+- Amazon CloudWatch log-group configuration
+
+A separate `bootstrap` Terraform configuration creates the remote-state S3 bucket. The backend uses:
+
+- Amazon S3 server-side encryption
+- S3 versioning
+- S3 native state locking
+- Public-access blocking
+- `prevent_destroy` protection for critical resources
+
+Existing AWS resources were imported into Terraform and reconciled until both Terraform configurations returned `No changes`.
+
+GitHub Actions automatically runs `terraform fmt`, backend-free initialization, and `terraform validate` for both `bootstrap` and `infrastructure`.
 
 ## SQL Analytics
 
@@ -136,6 +183,8 @@ The core end-to-end data pipeline is complete:
 - [x] Curated Glue Data Catalog
 - [x] Athena business analytics
 - [ ] Automated orchestration
-- [ ] Infrastructure as Code
+- [x] Infrastructure as Code
+- [x] Secure remote Terraform state
+- [x] Terraform CI validation
 - [ ] BI dashboard
 - [x] Automated tests
