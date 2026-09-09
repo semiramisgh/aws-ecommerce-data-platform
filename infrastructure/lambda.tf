@@ -33,7 +33,7 @@ resource "aws_lambda_function" "raw_ingestion_monitor" {
 
   logging_config {
     log_format = "Text"
-    log_group  = "/aws/lambda/${local.raw_ingestion_lambda_name}"
+    log_group  = aws_cloudwatch_log_group.raw_ingestion_lambda.name
   }
 
   lifecycle {
