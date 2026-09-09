@@ -1,0 +1,55 @@
+name: Terraform Checks
+
+on:
+  push:
+    branches:
+    - main
+    paths:
+    - "infrastructure/**"
+    - "bootstrap/**"
+    - ".github/workflows/terraform.yml"
+  pull_request:
+    branches:
+    - main
+    paths:
+    - "infrastructure/**"
+    - "bootstrap/**"
+    - ".github/workflows/terraform.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  terraform:
+    name: Validate ${{ matrix.directory }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+  strategy:
+    fail-fast: false
+    matrix:
+      directory:
+        - bootstrap
+        - infrastructure
+
+    defaults:
+      run:
+        working-directory: ${{ matrix.directory }}
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v4
+        with:
+        terraform_version: "1.16.1"
+
+      - name: Check formatting
+        run: terraform fmt -check -recursive
+
+      - name: Initialize Terraform without backend
+        run: terraform init -backend=false -input=false
+
+      - name: Validate configuration
+        run: terraform validate -no-color
