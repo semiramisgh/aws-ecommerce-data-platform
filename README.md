@@ -1,33 +1,36 @@
-AWS E-Commerce Data Platform
+# AWS E-Commerce Data Platform
+
 An end-to-end AWS data engineering project that ingests synthetic e-commerce data, processes it through raw, clean, and curated data layers, and makes it available for serverless analytics.
 
-Architecture
-flowchart LR
-    A[REST API and CSV] --> B[Python ingestion]
-    B --> C[S3 Raw JSON]
-    C --> D[AWS Lambda]
-    D --> E[CloudWatch]
-    C --> F[AWS Glue PySpark]
-    F --> G[S3 Clean Parquet]
-    G --> H[Glue Data Catalog]
-    H --> I[Amazon Athena]
-    G --> J[AWS Glue Curated Job]
-    J --> K[S3 Curated Sales]
-    K --> L[Glue Data Catalog]
-    L --> M[Athena Analytics]
+## Architecture
 
-Data Layers
-----------------------------------------------------------------------------------------------------------------------------
-Layer       Format                  Purpose     
-----------------------------------------------------------------------------------------------------------------------------
-raw         JSON                    Preserves the original ingested API and CSV data
-Clean       Parquet                 Stores validated and standardized customers, orders, and products
-Curated     Partitioned Parquet     Provides an analytics-ready sales dataset enriched with customer and product information
-----------------------------------------------------------------------------------------------------------------------------
+```mermaid
+flowchart TD
+A["REST API and CSV"] --> B["Python ingestion"]
+B --> C["Amazon S3 Raw - JSON"]
+C --> D["AWS Lambda"]
+D --> E["Amazon CloudWatch"]
+C --> F["AWS Glue - PySpark"]
+F --> G["Amazon S3 Clean - Parquet"]
+G --> H["AWS Glue Data Catalog"]
+H --> I["Amazon Athena"]
+G --> J["AWS Glue Curated Job"]
+J --> K["Amazon S3 Curated Sales"]
+K --> L["AWS Glue Data Catalog"]
+L --> M["Athena Analytics"]
+```
 
-The curated sales dataset is partitioned by ingestion_date to reduce the amount of data scanned by analytical queries.
+## Data Layers
 
-Implemented Workflow
+| Layer | Format | Purpose |
+|---|---|---|
+| Raw | JSON | Preserves the original ingested API and CSV data |
+| Clean | Parquet | Stores validated and standardized customers, orders, and products |
+| Curated | Partitioned Parquet | Provides an analytics-ready sales dataset enriched with customer and product information |
+
+The curated sales dataset is partitioned by `ingestion_date` to reduce the amount of data scanned by analytical queries.
+
+## Implemented Workflow
 
 1. Ingest synthetic customer, order, and product data using Python.
 2. Upload the source data to the Amazon S3 raw layer.
@@ -40,7 +43,7 @@ Implemented Workflow
 9. Register the curated dataset in the AWS Glue Data Catalog.
 10. Run analytical SQL queries using Amazon Athena.
 
-Analytics Results
+## Analytics Results
 
 The completed pipeline produced:
 
@@ -56,7 +59,9 @@ Example business analyses include:
 - Top products by net revenue
 - Top customers by revenue
 - Validation of record counts and financial totals
-- Technologies
+
+## Technologies
+
 - Python
 - PySpark
 - SQL
@@ -70,36 +75,39 @@ Example business analyses include:
 - AWS CLI
 - Git and GitHub
 
-Project Structure
+## Project Structure
+
+```text
 .
 ├── architecture/
-│   └── decisions/
+│ └── decisions/
 ├── data/
-│   ├── raw/
-│   ├── clean/
-│   ├── curated/
-│   └── sample/
+│ ├── raw/
+│ ├── clean/
+│ ├── curated/
+│ └── sample/
 ├── docs/
 ├── infrastructure/
 ├── sql/
-│   └── athena/
+│ └── athena/
 └── src/
-    ├── glue/
-    ├── ingestion/
-    ├── lambda/
-    └── utils/
+├── glue/
+├── ingestion/
+├── lambda/
+└── utils/
+```
 
-SQL Analytics
+## SQL Analytics
 
-Athena queries are stored in sql/athena/:
+Athena queries are stored in `sql/athena/`:
 
-- 01_validate_clean_counts.sql
-- 02_top_customers_by_revenue.sql
-- 03_validate_curated_sales.sql
-- 04_revenue_by_category.sql
-- 05_top_products_by_revenue.sql
+- `01_validate_clean_counts.sql`
+- `02_top_customers_by_revenue.sql`
+- `03_validate_curated_sales.sql`
+- `04_revenue_by_category.sql`
+- `05_top_products_by_revenue.sql`
 
-Reliability and Cost Controls
+## Reliability and Cost Controls
 
 The project uses:
 
@@ -114,20 +122,20 @@ The project uses:
 - Environment variables for configuration
 - No credentials or secrets committed to Git
 
-Project Status
+## Project Status
 
 The core end-to-end data pipeline is complete:
 
-- ☑ Data ingestion
-- ☑ S3 raw layer
-- ☑ Lambda monitoring
-- ☑ Raw-to-clean Glue transformation
-- ☑ Clean Glue Data Catalog
-- ☑ Athena clean-data validation
-- ☑ Clean-to-curated Glue transformation
-- ☑ Curated Glue Data Catalog
-- ☑ Athena business analytics
-- ☐ Automated orchestration
-- ☐ Infrastructure as Code
-- ☐ BI dashboard
-- ☐ Automated tests
+- [x] Data ingestion
+- [x] S3 raw layer
+- [x] Lambda monitoring
+- [x] Raw-to-clean Glue transformation
+- [x] Clean Glue Data Catalog
+- [x] Athena clean-data validation
+- [x] Clean-to-curated Glue transformation
+- [x] Curated Glue Data Catalog
+- [x] Athena business analytics
+- [ ] Automated orchestration
+- [ ] Infrastructure as Code
+- [ ] BI dashboard
+- [ ] Automated tests
