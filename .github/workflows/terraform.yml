@@ -3,18 +3,18 @@ name: Terraform Checks
 on:
   push:
     branches:
-    - main
+      - main
     paths:
-    - "infrastructure/**"
-    - "bootstrap/**"
-    - ".github/workflows/terraform.yml"
+      - "infrastructure/**"
+      - "bootstrap/**"
+      - ".github/workflows/terraform.yml"
   pull_request:
     branches:
-    - main
+      - main
     paths:
-    - "infrastructure/**"
-    - "bootstrap/**"
-    - ".github/workflows/terraform.yml"
+      - "infrastructure/**"
+      - "bootstrap/**"
+      - ".github/workflows/terraform.yml"
 
 permissions:
   contents: read
@@ -43,7 +43,7 @@ jobs:
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v4
         with:
-        terraform_version: "1.16.1"
+          terraform_version: "1.16.1"
 
       - name: Check formatting
         run: terraform fmt -check -recursive
